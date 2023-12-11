@@ -11,7 +11,7 @@ let score = 0;
 const speed = 0.09;
 const rotationSpeed = 0.05;
 const friction = 0.98;
-const laserSpeed = 8;
+const laserSpeed = 9;
 const asteroids = [];
 const lasers = [];
 
