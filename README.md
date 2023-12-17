@@ -7,8 +7,10 @@
 - **Javascript**
 
 ## Key Features
-- **Text-based game enabling users to reach various "destinations" based on their input, incorporating initial data types, variables, operators, conditional blocks, and interactive user input.**
+- **Browser-based game utilizing HTML / CSS / JavaScript and used JavaScript to serve as the front-end methods and functions.**
+- **Created an “Asteroids” remake with some new-aged spins on the original game and included a leaderboard and different levels of difficulty for users.**
 - **User shoots asteroids for points, the more the points the greater the chance to be on the leaderboard for the challenge level.**
+- **Text-based game enabling users to reach various "destinations" based on their input, incorporating initial data types, variables, operators, conditional blocks, and interactive user input.**
 
 ## App Images
 ![Flow](./assets/FLOW.png)
