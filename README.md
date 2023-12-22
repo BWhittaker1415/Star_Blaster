@@ -1,5 +1,6 @@
 # Star Blaster
 **A legacy game gets spun into the new age with an updated, modern look and feel.**
+<a href="https://star_blaster_bw.surge.sh/">Play the game here,</a> and continue on for more info on the project.
 
 ## Technologies Used
 - **HTML 5**
