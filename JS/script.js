@@ -113,6 +113,16 @@ class Player {
     this.rotation = 0;
     this.isInvulnerable = false;
   }
+
+  drawThruster() {
+    ctx.beginPath();
+    ctx.moveTo(this.position.x - 10, this.position.y - 6);
+    ctx.lineTo(this.position.x - 25, this.position.y);
+    ctx.lineTo(this.position.x - 10, this.position.y + 6);
+    ctx.fillStyle = "orange";
+    ctx.fill();
+  }
+
   create() {
     this.invulnerabilityEffect();
 
@@ -132,6 +142,9 @@ class Player {
     ctx.strokeStyle = "yellow";
     ctx.lineWidth = 2;
     ctx.stroke();
+    if (keys.up.pressed) {
+      this.drawThruster();
+    }
     ctx.restore();
 
     ctx.globalAlpha = 1;
