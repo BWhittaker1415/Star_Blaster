@@ -8,6 +8,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let lives = 3;
 const bonusLifeEl = document.getElementById("bonus-life");
+const invulnerabilityDuration = 2000;
 const scoreDisplay = document.querySelector("js-score");
 let score = 0;
 const speed = 0.05;
@@ -34,8 +35,15 @@ function updateLivesDisplay() {
 }
 
 function loseLife() {
+  if (player.isInvulnerable) return;
+
   lives -= 1;
   updateLivesDisplay();
+  player.isInvulnerable = true;
+
+  setTimeout(() => {
+    player.isInvulnerable = false;
+  }, invulnerabilityDuration);
 
   if (lives <= 0) {
     gameOver.style.display = "block";
@@ -103,8 +111,11 @@ class Player {
     this.position = position;
     this.velocity = velocity;
     this.rotation = 0;
+    this.isInvulnerable = false;
   }
   create() {
+    this.invulnerabilityEffect();
+
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
     ctx.rotate(this.rotation);
@@ -122,6 +133,8 @@ class Player {
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.restore();
+
+    ctx.globalAlpha = 1;
 
     if (this.position.x < 0) this.position.x = canvas.width;
 
@@ -155,6 +168,14 @@ class Player {
         y: this.position.y + sin * -10 + cos * -10,
       },
     ];
+  }
+
+  invulnerabilityEffect() {
+    if (this.isInvulnerable) {
+      ctx.globalAlpha = ctx.globalAlpha === 1 ? 0.5 : 1;
+    } else {
+      ctx.globalAlpha = 1;
+    }
   }
 }
 
