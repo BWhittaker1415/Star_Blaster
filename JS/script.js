@@ -8,21 +8,21 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const scoreDisplay = document.querySelector("js-score");
 let score = 0;
-const speed = 0.04;
-const rotationSpeed = 0.03;
+const speed = 0.05;
+const rotationSpeed = 0.04;
 const friction = 0.97;
-const laserSpeed = 6;
+const laserSpeed = 7;
 const asteroids = [];
 const lasers = [];
 
 const keys = {
-  w: {
+  up: {
     pressed: false,
   },
-  a: {
+  left: {
     pressed: false,
   },
-  d: {
+  right: {
     pressed: false,
   },
 };
@@ -205,17 +205,17 @@ class Asteroid {
 
 window.addEventListener("keydown", (event) => {
   switch (event.code) {
-    case "KeyW":
-      console.log("KeyW");
-      keys.w.pressed = true;
+    case "ArrowUp":
+      console.log("ArrowUp");
+      keys.up.pressed = true;
       break;
-    case "KeyA":
-      console.log("KeyA");
-      keys.a.pressed = true;
+    case "ArrowLeft":
+      console.log("ArrowLeft");
+      keys.left.pressed = true;
       break;
-    case "KeyD":
-      console.log("KeyD");
-      keys.d.pressed = true;
+    case "ArrowRight":
+      console.log("ArrowRight");
+      keys.right.pressed = true;
       break;
     case "Space":
       lasers.push(
@@ -236,17 +236,17 @@ window.addEventListener("keydown", (event) => {
 
 window.addEventListener("keyup", (event) => {
   switch (event.code) {
-    case "KeyW":
-      console.log("KeyW");
-      keys.w.pressed = false;
+    case "ArrowUp":
+      console.log("ArrowUp");
+      keys.up.pressed = false;
       break;
-    case "KeyA":
-      console.log("KeyA");
-      keys.a.pressed = false;
+    case "ArrowLeft":
+      console.log("ArrowLeft");
+      keys.left.pressed = false;
       break;
-    case "KeyD":
-      console.log("KeyD");
-      keys.d.pressed = false;
+    case "ArrowRight":
+      console.log("ArrowRight");
+      keys.right.pressed = false;
       break;
   }
 });
@@ -373,14 +373,14 @@ function animate() {
     }
   }
 
-  if (keys.w.pressed) {
+  if (keys.up.pressed) {
     player.velocity.x += Math.cos(player.rotation) * speed;
     player.velocity.y += Math.sin(player.rotation) * speed;
-  } else if (!keys.w.pressed) {
+  } else if (!keys.up.pressed) {
     player.velocity.x *= friction;
     player.velocity.y *= friction;
   }
-  if (keys.d.pressed) player.rotation += rotationSpeed;
-  else if (keys.a.pressed) player.rotation -= rotationSpeed;
+  if (keys.right.pressed) player.rotation += rotationSpeed;
+  else if (keys.left.pressed) player.rotation -= rotationSpeed;
 }
 animate();

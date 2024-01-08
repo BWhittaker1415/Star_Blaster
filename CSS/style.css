@@ -1,4 +1,9 @@
 /* ========== GLOBAL CSS ============ */
+* {
+   box-sizing: border-box;
+   margin: 0;
+}
+
 body {
    margin: 0;
    background-color: #000;
@@ -119,6 +124,31 @@ a:visited {
    color: #34343F;
 }
 
+progress {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;
+   width: 80%;
+   height: 2rem;
+   color: #ff0062;
+   border: 1px solid #a927f5;
+ }
+ 
+ progress[value]::-webkit-progress-bar,
+ progress[value] {
+   background-color: #eee;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+ }
+ 
+ progress[value]::-webkit-progress-value {
+   background-color: #a927f5;
+   transition: all 0.2s ease-out;
+ }
+ 
+ progress[value]::-moz-progress-bar {
+   background-color: #a927f5;
+   transition: all 0.2s ease-out;
+ }
 
 .buttonContainer {
    display: flex;
