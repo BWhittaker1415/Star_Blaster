@@ -6,6 +6,8 @@ ctx.globalCompositeOperation = "lighter";
 const gameOver = document.querySelector(".game-over");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+let lives = 3;
+const bonusLifeEl = document.getElementById("bonus-life");
 const scoreDisplay = document.querySelector("js-score");
 let score = 0;
 const speed = 0.05;
@@ -26,6 +28,27 @@ const keys = {
     pressed: false,
   },
 };
+
+function updateLivesDisplay() {
+  bonusLifeEl.textContent = `Ships: ${lives}`;
+}
+
+function loseLife() {
+  lives -= 1;
+  updateLivesDisplay();
+
+  if (lives <= 0) {
+    gameOver.style.display = "block";
+    console.log("GAME OVER");
+    window.cancelAnimationFrame(animationId);
+    clearInterval(intervalId);
+  } else {
+    player.position = { x: canvas.width / 2, y: canvas.height / 2 };
+    player.velocity = { x: 0, y: 0 };
+  }
+}
+
+updateLivesDisplay();
 
 ////////////// INTERVALS ///////////////
 const intervalId = window.setInterval(() => {
@@ -304,6 +327,7 @@ function shipAsteroidCollision(circle, triangle) {
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance <= circle.radius) {
+      loseLife();
       return true;
     }
   }
@@ -348,10 +372,7 @@ function animate() {
     asteroid.update();
 
     if (shipAsteroidCollision(asteroid, player.getVertices())) {
-      gameOver.style.display = "block";
-      console.log("GAME OVER");
-      window.cancelAnimationFrame(animationId);
-      clearInterval(intervalId);
+      loseLife();
     }
 
     if (
