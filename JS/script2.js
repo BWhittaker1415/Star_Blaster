@@ -263,18 +263,22 @@ class Asteroid {
 window.addEventListener("keydown", (event) => {
   switch (event.code) {
     case "ArrowUp":
+      event.preventDefault();
       console.log("ArrowUp");
       keys.up.pressed = true;
       break;
     case "ArrowLeft":
+      event.preventDefault();
       console.log("ArrowLeft");
       keys.left.pressed = true;
       break;
     case "ArrowRight":
+      event.preventDefault();
       console.log("ArrowRight");
       keys.right.pressed = true;
       break;
     case "Space":
+      event.preventDefault();
       lasers.push(
         new Laser({
           position: {
