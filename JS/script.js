@@ -185,7 +185,7 @@ class Player {
 
   invulnerabilityEffect() {
     if (this.isInvulnerable) {
-      ctx.globalAlpha = ctx.globalAlpha === 1 ? 0.5 : 1;
+      ctx.globalAlpha = ctx.globalAlpha === 1 ? 0.3 : 1;
     } else {
       ctx.globalAlpha = 1;
     }
@@ -362,6 +362,7 @@ function shipAsteroidCollision(circle, triangle) {
 
     if (distance <= circle.radius) {
       loseLife();
+      console.log("collision");
       return true;
     }
   }

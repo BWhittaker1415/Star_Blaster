@@ -6,33 +6,64 @@ ctx.globalCompositeOperation = "lighter";
 const gameOver = document.querySelector(".game-over");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+let lives = 3;
+const bonusLifeEl = document.getElementById("bonus-life");
+const invulnerabilityDuration = 1000;
 const scoreDisplay = document.querySelector("js-score");
 let score = 0;
-const speed = 0.09;
-const rotationSpeed = 0.05;
+const speed = 0.08;
+const rotationSpeed = 0.06;
 const friction = 0.98;
 const laserSpeed = 9;
 const asteroids = [];
 const lasers = [];
 
 const keys = {
-  w: {
+  up: {
     pressed: false,
   },
-  a: {
+  left: {
     pressed: false,
   },
-  d: {
+  right: {
     pressed: false,
   },
 };
+
+function updateLivesDisplay() {
+  bonusLifeEl.textContent = `Ships: ${lives}`;
+}
+
+function loseLife() {
+  if (player.isInvulnerable) return;
+
+  lives -= 1;
+  updateLivesDisplay();
+  player.isInvulnerable = true;
+
+  setTimeout(() => {
+    player.isInvulnerable = false;
+  }, invulnerabilityDuration);
+
+  if (lives <= 0) {
+    gameOver.style.display = "block";
+    console.log("GAME OVER");
+    window.cancelAnimationFrame(animationId);
+    clearInterval(intervalId);
+  } else {
+    player.position = { x: canvas.width / 2, y: canvas.height / 2 };
+    player.velocity = { x: 0, y: 0 };
+  }
+}
+
+updateLivesDisplay();
 
 ////////////// INTERVALS ///////////////
 const intervalId = window.setInterval(() => {
   const index = Math.floor(Math.random() * 4);
   let x, y;
   let vx, vy;
-  let radius = 50 * Math.random() + 10;
+  let radius = 60 * Math.random() + 8;
   switch (index) {
     case 0: //left side of the screen
       x = 0 - radius;
@@ -80,9 +111,21 @@ class Player {
     this.position = position;
     this.velocity = velocity;
     this.rotation = 0;
+    this.isInvulnerable = false;
+  }
+
+  drawThruster() {
+    ctx.beginPath();
+    ctx.moveTo(this.position.x - 10, this.position.y - 6);
+    ctx.lineTo(this.position.x - 25, this.position.y);
+    ctx.lineTo(this.position.x - 10, this.position.y + 6);
+    ctx.fillStyle = "yellow";
+    ctx.fill();
   }
 
   create() {
+    this.invulnerabilityEffect();
+
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
     ctx.rotate(this.rotation);
@@ -99,7 +142,12 @@ class Player {
     ctx.strokeStyle = "magenta";
     ctx.lineWidth = 2;
     ctx.stroke();
+    if (keys.up.pressed) {
+      this.drawThruster();
+    }
     ctx.restore();
+
+    ctx.globalAlpha = 1;
 
     if (this.position.x < 0) this.position.x = canvas.width;
 
@@ -134,6 +182,14 @@ class Player {
       },
     ];
   }
+
+  invulnerabilityEffect() {
+    if (this.isInvulnerable) {
+      ctx.globalAlpha = ctx.globalAlpha === 1 ? 0.3 : 1;
+    } else {
+      ctx.globalAlpha = 1;
+    }
+  }
 }
 
 const player = new Player({
@@ -159,7 +215,7 @@ class Laser {
       false
     );
     ctx.closePath();
-    ctx.fillStyle = "yellow";
+    ctx.fillStyle = "white";
     ctx.fill();
   }
   update() {
@@ -206,17 +262,17 @@ class Asteroid {
 
 window.addEventListener("keydown", (event) => {
   switch (event.code) {
-    case "KeyW":
-      console.log("KeyW");
-      keys.w.pressed = true;
+    case "ArrowUp":
+      console.log("ArrowUp");
+      keys.up.pressed = true;
       break;
-    case "KeyA":
-      console.log("KeyA");
-      keys.a.pressed = true;
+    case "ArrowLeft":
+      console.log("ArrowLeft");
+      keys.left.pressed = true;
       break;
-    case "KeyD":
-      console.log("KeyD");
-      keys.d.pressed = true;
+    case "ArrowRight":
+      console.log("ArrowRight");
+      keys.right.pressed = true;
       break;
     case "Space":
       lasers.push(
@@ -237,17 +293,17 @@ window.addEventListener("keydown", (event) => {
 
 window.addEventListener("keyup", (event) => {
   switch (event.code) {
-    case "KeyW":
-      console.log("KeyW");
-      keys.w.pressed = false;
+    case "ArrowUp":
+      console.log("ArrowUp");
+      keys.up.pressed = false;
       break;
-    case "KeyA":
-      console.log("KeyA");
-      keys.a.pressed = false;
+    case "ArrowLeft":
+      console.log("ArrowLeft");
+      keys.left.pressed = false;
       break;
-    case "KeyD":
-      console.log("KeyD");
-      keys.d.pressed = false;
+    case "ArrowRight":
+      console.log("ArrowRight");
+      keys.right.pressed = false;
       break;
   }
 });
@@ -268,9 +324,9 @@ function objectHit(object1, object2) {
   );
 
   if (distance <= object1.radius + object2.radius) {
-    if (object1.radius > 30) score += 100;
-    if (object1.radius > 20 && object1.radius < 30) score += 500;
-    if (object1.radius > 10 && object1.radius < 20) score += 1000;
+    if (object1.radius > 30) score += 1000;
+    if (object1.radius > 20 && object1.radius < 30) score += 5000;
+    if (object1.radius > 10 && object1.radius < 20) score += 10000;
     console.log(object1.radius, object2.radius);
 
     return true;
@@ -306,6 +362,7 @@ function shipAsteroidCollision(circle, triangle) {
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance <= circle.radius) {
+      loseLife();
       console.log("collision");
       return true;
     }
@@ -352,10 +409,7 @@ function animate() {
     asteroid.update();
 
     if (shipAsteroidCollision(asteroid, player.getVertices())) {
-      gameOver.style.display = "block";
-      console.log("GAME OVER");
-      window.cancelAnimationFrame(animationId);
-      clearInterval(intervalId);
+      loseLife();
     }
 
     if (
@@ -377,15 +431,15 @@ function animate() {
     }
   }
 
-  if (keys.w.pressed) {
+  if (keys.up.pressed) {
     player.velocity.x += Math.cos(player.rotation) * speed;
     player.velocity.y += Math.sin(player.rotation) * speed;
-  } else if (!keys.w.pressed) {
+  } else if (!keys.up.pressed) {
     player.velocity.x *= friction;
     player.velocity.y *= friction;
   }
-  if (keys.d.pressed) player.rotation += rotationSpeed;
-  else if (keys.a.pressed) player.rotation -= rotationSpeed;
+  if (keys.right.pressed) player.rotation += rotationSpeed;
+  else if (keys.left.pressed) player.rotation -= rotationSpeed;
 }
 
 animate();
